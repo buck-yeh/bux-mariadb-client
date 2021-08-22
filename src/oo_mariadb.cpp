@@ -4,7 +4,7 @@
 #include <vector>           // std::vector<>
 #include <algorithm>        // std::min()
 #ifdef CLT_DEBUG_
-#include "Logger.h"         // LOG(), FUNLOGX()
+#include <bux/Logger.h>     // LOG(), FUNLOGX()
 #endif
 
 /* NOTE:
