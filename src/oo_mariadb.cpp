@@ -18,7 +18,7 @@ namespace {
 //
 //      In-Module Functions
 //
-void flushResults(MYSQL *mysql)
+void flushResults(MYSQL *mysql) noexcept
 {
     while (!mysql_next_result(mysql))
         mysql_free_result(mysql_use_result(mysql));
