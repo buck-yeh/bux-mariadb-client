@@ -322,7 +322,7 @@ void C_MySQL::connect_()
 
     const auto arg = m_getConnArg();
     const char *whatPrefix;
-    if (mysql_options(mysql, MYSQL_SET_CHARSET_NAME, "utf8"))
+    if (mysql_options(mysql, MYSQL_SET_CHARSET_NAME, arg.m_charset.c_str()))
         whatPrefix = "Fail to set charset";
     else if (mysql_options(mysql, MYSQL_OPT_RECONNECT, "1"))
         whatPrefix = "Fail to enable auto-reconnect";
@@ -333,7 +333,9 @@ void C_MySQL::connect_()
             password = arg.m_password.c_str();
 
         if (mysql_real_connect(mysql, arg.m_host.c_str(), arg.m_user.c_str(), password,
-            nullptr, 0, nullptr, CLIENT_MULTI_STATEMENTS|CLIENT_COMPRESS))
+            arg.m_db.empty()? nullptr: arg.m_db.c_str(),
+            arg.m_port? *arg.m_port: 0,
+            nullptr, CLIENT_MULTI_STATEMENTS|CLIENT_COMPRESS))
             // Connected successfully
         {
             m_mysql = mysql;
@@ -454,18 +456,6 @@ void C_MySqlStmt::bindParams(const std::function<void(MYSQL_BIND *barr)> &binder
     }
 }
 
-MYSQL_BIND *C_MySqlStmt::execResults(const std::function<void(MYSQL_BIND *barr)> &binder)
-{
-    exec();
-    allocBind(mysql_stmt_field_count(m_stmt));
-    const auto barr = bindArray();
-    binder(barr);
-    if (mysql_stmt_bind_result(m_stmt, barr))
-        RUNTIME_ERROR("Fail to bind result{}", errorSuffix(m_stmt));
-
-    return barr;
-}
-
 void C_MySqlStmt::clear() const
 {
     mysql_stmt_free_result(m_stmt);
@@ -492,6 +482,18 @@ Retry:
         }
     }
     return 0;
+}
+
+MYSQL_BIND *C_MySqlStmt::execBindResults(const std::function<void(MYSQL_BIND *barr)> &binder)
+{
+    exec();
+    allocBind(mysql_stmt_field_count(m_stmt));
+    const auto barr = bindArray();
+    binder(barr);
+    if (mysql_stmt_bind_result(m_stmt, barr))
+        RUNTIME_ERROR("Fail to bind result{}", errorSuffix(m_stmt));
+
+    return barr;
 }
 
 std::pair<const void*,size_t> C_MySqlStmt::getLongBlob(size_t i, std::function<void*(size_t bytes)> alloc) const
@@ -531,7 +533,7 @@ unsigned C_MySqlStmt::maxAllowedPacket() const
     {
         C_MySqlStmt stmt(m_stmt->mysql);    // Access of m_stmt->mysql is undocumented
         stmt.prepare("select @@max_allowed_packet");
-        stmt.execResults([this](auto barr){
+        stmt.execBindResults([this](auto barr){
             bindInt(*barr, m_maxPacketBytes);
         });
         if (!stmt.nextRow() || m_maxPacketBytes % 1024)
@@ -560,7 +562,7 @@ void C_MySqlStmt::prepare(const std::string &sql) const
 
 bool C_MySqlStmt::queryUint(unsigned &dst)
 {
-    execResults([&](auto barr){
+    execBindResults([&](auto barr){
         bindInt(*barr, dst);
     });
     if (!nextRow())

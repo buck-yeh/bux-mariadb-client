@@ -1,16 +1,17 @@
-﻿#ifndef oo_mariadb_H_
-#define oo_mariadb_H_
+﻿#pragma once
 
 /*! \file
-    \brief MySQL/MariaDB Connector/C API Wrappers
+    \brief MySQL/MariaDB Connector/C API Throw-On-Error C++ Wrappers
 */
 
 #include <mysql/mysql.h>    // MYSQL, MYSQL_RES, MYSQL_STMT, MYSQL_BIND
+#include <concepts>         // std::integral<>, std::convertible_to<>, std::invocable<>
 #include <functional>       // std::function<>
-#include <memory>           // std::unique_ptr<>
-#include <string>           // std::string
 #include <limits>           // std::numeric_limits<>
 #include <map>              // std::map<>
+#include <memory>           // std::unique_ptr<>
+#include <optional>         // std::optional<>
+#include <string>           // std::string
 
 namespace bux {
 
@@ -18,14 +19,16 @@ namespace bux {
 //      Types
 //
 enum E_MySqlResultKind
-/// \brief query 後取得 MYSQL_RES 物件指標的方式
+/// \brief Retrieval methods after calling query() based using MYSQL_RES API
 {
     MYSQL_USE_RESULT,   ///< mysql_use_result()
     MYSQL_STORE_RESULT  ///< mysql_store_result()
 };
 
 class [[nodiscard]]C_MySqlResult
-/// \brief 方便使用 <a href="https://dev.mysql.com/doc/refman/5.7/en/mysql-use-result.html">MYSQL_RES 相關API</a>的類別
+/*! \brief Owner class of <a href="https://dev.mysql.com/doc/refman/5.7/en/mysql-use-result.html">MYSQL_RES *</a>
+    which is intended to be directly passed to original MySQL API, e.g. <tt>mysql_fetch_row()</tt>
+*/
 {
 public:
 
@@ -45,7 +48,7 @@ private:
 };
 
 class C_MySqlStmt
-/// \brief 方便使用 <a href="https://dev.mysql.com/doc/refman/5.7/en/c-api-prepared-statement-functions.html">MYSQL_STMT 相關API</a> 的類別
+/// \brief Owner class of <a href="https://dev.mysql.com/doc/refman/5.7/en/c-api-prepared-statement-functions.html">MYSQL_STMT *</a> with recurring methods
 {
 public:
 
@@ -59,8 +62,8 @@ public:
     auto bindSize() const { return m_bindSize; }
     void bindParams(const std::function<void(MYSQL_BIND *barr)> &binder);
     void clear() const;
-    MYSQL_BIND *execResults(const std::function<void(MYSQL_BIND *barr)> &binder);
     void exec() const;
+    MYSQL_BIND *execBindResults(const std::function<void(MYSQL_BIND *barr)> &binder);
     unsigned execNoThrow() const;
     std::pair<const void*,size_t> getLongBlob(size_t i, std::function<void*(size_t bytes)> alloc) const;
     std::string getLongBlob(size_t i) const;
@@ -84,17 +87,22 @@ private:
 
 struct C_MyConnectArg
 {
-    std::string         m_host, m_user, m_password;
+    std::string             m_host, m_user, m_password, m_db, m_charset = "utf8mb4";
+    std::optional<unsigned> m_port;
 };
-typedef std::function<C_MyConnectArg()> F_ConnectArg;
 
 class C_MySQL
+/*! \brief <tt>MYSQL*</tt> wrapper class, which is thread-aware but not thread-safe.
+            Use mutex to guard the use of C_MySQL instance or there will be trouble.
+*/
 {
 public:
 
     // Nonvirtuals
-    template<class T>
-    C_MySQL(T &&getConnArg): m_getConnArg(std::forward<T>(getConnArg)) {}
+    C_MySQL(std::invocable<> auto getConnArg) requires requires { {getConnArg()}->std::convertible_to<C_MyConnectArg>; }:
+        m_getConnArg(getConnArg) {}
+    C_MySQL(std::convertible_to<C_MyConnectArg> auto connArg):
+        m_getConnArg([connArg]{ return connArg; }) {}
     ~C_MySQL();
     C_MySQL(const C_MySQL&) = delete;
     C_MySQL &operator=(const C_MySQL&) = delete;
@@ -117,7 +125,7 @@ protected:
 private:
 
     // Data
-    const F_ConnectArg              m_getConnArg;
+    std::function<C_MyConnectArg()> const m_getConnArg;
     MYSQL                           *m_mysql{};
     unsigned long                   m_threadID{};
     std::unique_ptr<C_MySqlStmt>    m_pstmt;
@@ -190,12 +198,12 @@ void getDatabaseCollation(MYSQL *mysql, const std::string &bof_db,
 //
 //      Templates
 //
-template<class T>
+template<std::integral T>
 void bindInt(MYSQL_BIND &dst, T &value)
 {
 #if 1
     volatile auto t = &dst.is_null_value;
-    dst.is_null = t; // The trick is due to straightforward form is somehow optimized away.
+    dst.is_null = t; // The trick is due to the straightforward form as in else part is somehow optimized away.
 #else
     dst.is_null = &dst.is_null_value;
 #endif
@@ -206,5 +214,3 @@ void bindInt(MYSQL_BIND &dst, T &value)
 }
 
 } // namespace bux
-
-#endif // oo_mariadb_H_
