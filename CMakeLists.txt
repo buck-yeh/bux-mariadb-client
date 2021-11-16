@@ -10,7 +10,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(FetchedBux)
 
-project(bux-mariadb)
+project(bux-mariadb-client)
 
 set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -Og -std=c++20")
 #string(APPEND CMAKE_CXX_FLAGS " -g3")
@@ -32,7 +32,7 @@ find_package(fmt CONFIG REQUIRED)
 
 add_subdirectory (src)
 
-install(TARGETS bux-mariadb
+install(TARGETS bux-mariadb-client
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
