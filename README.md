@@ -16,6 +16,32 @@ The goal is to minimize boilerplate code when doing the same things using Connec
 
 ## MYSQL_STMT 
 `MYSQL_STMT*` releated function are highly wrapped into methods of `bux::C_MySqlStmt`. Usages against alternatives are recommended to prevent _SQL injection_.
+~~~C++
+class C_MySqlStmt
+{
+public:
+
+    // Nonvirtuals
+    C_MySqlStmt(MYSQL *mysql);
+    ~C_MySqlStmt();
+    C_MySqlStmt(const C_MySqlStmt &stmt) = delete;
+    C_MySqlStmt &operator=(const C_MySqlStmt &) = delete;
+    operator MYSQL_STMT*() const { return m_stmt; }
+    bool affected() const;
+    auto bindSize() const { return m_bindSize; }
+    void bindParams(const std::function<void(MYSQL_BIND *barr)> &binder);
+    void clear() const;
+    void exec() const;
+    MYSQL_BIND *execBindResults(const std::function<void(MYSQL_BIND *barr)> &binder);
+    unsigned execNoThrow() const;
+    std::pair<const void*,size_t> getLongBlob(size_t i, std::function<void*(size_t bytes)> alloc) const;
+    std::string getLongBlob(size_t i) const;
+    bool nextRow() const;
+    void prepare(const std::string &sql) const;
+    bool queryUint(unsigned &dst);
+    //...
+};
+~~~
 
 ## Funtions
 - If your just need to get an single value from SQL, like:
