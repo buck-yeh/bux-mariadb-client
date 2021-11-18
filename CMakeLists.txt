@@ -1,14 +1,21 @@
 cmake_minimum_required (VERSION 3.18)
 cmake_policy(VERSION 3.18)
+
+if(not ${DEPENDEE_ROOT})
+set(DEPENDEE_ROOT "..")
+endif()
+
+if(${FETCH_DEPENDEES})
 include(FetchContent)
 
 FetchContent_Declare(
   FetchedBux
   GIT_REPOSITORY https://github.com/buck-yeh/bux.git
   GIT_TAG        main
-  SOURCE_DIR     ../bux
+  SOURCE_DIR     ${DEPENDEE_ROOT}/bux
 )
 FetchContent_MakeAvailable(FetchedBux)
+endif()
 
 project(bux-mariadb-client)
 
