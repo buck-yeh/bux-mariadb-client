@@ -590,10 +590,7 @@ void C_LockTablesTillEnd::addWrite(const std::string &table)
 void C_LockTablesTillEnd::lock()
 {
     if (m_spec.empty())
-    {
-        unlock();
-        return;
-    }
+        return unlock();
 
     std::string sql;
     for (auto &i: m_spec)

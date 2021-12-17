@@ -1,11 +1,11 @@
 cmake_minimum_required (VERSION 3.18)
 cmake_policy(VERSION 3.18)
 
-if(not ${DEPENDEE_ROOT})
+if(NOT DEFINED DEPENDEE_ROOT)
 set(DEPENDEE_ROOT "..")
 endif()
 
-if(${FETCH_DEPENDEES})
+if(DEFINED FETCH_DEPENDEES)
 include(FetchContent)
 
 FetchContent_Declare(
@@ -19,7 +19,7 @@ endif()
 
 project(bux-mariadb-client)
 
-set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -Wno-unknown-pragmas -g3 -Og -std=c++20")
+set(GNU_LIKE_CXX_FLAGS " -Wall -Wextra -Wshadow -Wconversion -Wno-parentheses -g3 -Og -std=c++20")
 #string(APPEND CMAKE_CXX_FLAGS " -g3")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

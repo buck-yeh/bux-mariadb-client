@@ -1,5 +1,5 @@
 # Rationale
-The goal is to minimize boilerplate code when doing the same things using Connector/C. Only recurring usages are wrapped into helper classes C++ functions. Mixed uses of this module and Connector/C API are expected. Remember to always use `bux::C_MySQL`, `bux::C_MySqlStmt`, `bux::C_MySqlResult` over `MYSQL*`, `MYSQL_STMT*`, `MYSQL_RES*` and you will be fine.  
+The goal is to minimize boilerplate code when doing the same things using Connector/C. Only recurring usages are wrapped into helper classes or plain functions. Mixed uses of this module and Connector/C API are expected. Remember to always use `bux::C_MySQL`, `bux::C_MySqlStmt`, `bux::C_MySqlResult` over `MYSQL*`, `MYSQL_STMT*`, `MYSQL_RES*` and you will be fine.  
 
 # API Summary
 ## Recurring Types and Their Safe Counterparts
@@ -80,4 +80,4 @@ public:
   ~~~
 - Call `useDatabase()` to change the _current_ database.
 - Call `getTableSchema()` to get table schema in form of `CREATE TABLE ...` SQL command.
-- Call `resetDatabase()` to clear the whole database, into `empty`, _with extreme care_.
+- Call `resetDatabase()` to clear the whole database, into emptiness, _with extreme care_.
