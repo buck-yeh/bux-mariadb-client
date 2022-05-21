@@ -20,7 +20,7 @@ The goal is to minimize boilerplate code when doing the same things using Connec
 
 ### MYSQL_STMT
 
-`MYSQL_STMT*` releated function are highly wrapped into methods of `bux::C_MySqlStmt`. Usages against alternatives are recommended to prevent _SQL injection_.
+`MYSQL_STMT*` releated function are highly wrapped into methods of `bux::C_MySqlStmt`, preferred over `bux::C_MySqlResult` to prevent _SQL injection_.
 
 ~~~C++
 class C_MySqlStmt
