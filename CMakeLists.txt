@@ -35,6 +35,15 @@ else()
     message("Unknown compiler")
 endif()
 
+IF(DEFINED FETCH_DEPENDEES)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        string(APPEND CMAKE_CXX_FLAGS " /I ${fetchedbux_SOURCE_DIR}/include")
+    else()
+        string(APPEND CMAKE_CXX_FLAGS " -I${fetchedbux_SOURCE_DIR}/include")
+    endif()
+ENDIF()
+message("Root/CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
+
 find_package(fmt CONFIG REQUIRED)
 
 add_subdirectory (src)
