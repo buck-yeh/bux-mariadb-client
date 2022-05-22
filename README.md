@@ -1,3 +1,19 @@
+
+## Table of Contents
+
+   * [Rationale](#rationale)
+   * [API Summary](#api-summary)
+      * [Recurring Types and Their Safe Counterparts](#recurring-types-and-their-safe-counterparts)
+         * [Benefits](#benefits)
+      * [MYSQL_STMT](#mysql_stmt)
+      * [Funtions](#funtions)
+   * [Installation](#installation)
+      * [in <a href="https://archlinux.org/" rel="nofollow">ArchLinux</a>](#in-archlinux)
+      * [from github in any of <a href="https://distrowatch.com/" rel="nofollow">Linux distros</a>](#from-github-in-any-of-linux-distros)
+      * [from vcpkg in Windows](#from-vcpkg-in-windows)
+
+*(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc))*
+
 ## Rationale
 
 The goal is to minimize boilerplate code when doing the same things using Connector/C. Only recurring usages are wrapped into helper classes or plain functions. Mixed uses of this module and Connector/C API are expected. Remember to always use `bux::C_MySQL`, `bux::C_MySqlStmt`, `bux::C_MySqlResult` over `MYSQL*`, `MYSQL_STMT*`, `MYSQL_RES*` and you will be fine.  
@@ -98,3 +114,74 @@ public:
 - Call `useDatabase()` to change the _current_ database.
 - Call `getTableSchema()` to get table schema in form of `CREATE TABLE ...` SQL command.
 - Call `resetDatabase()` to clear the whole database, into emptiness, _with extreme care_.
+
+## Installation
+
+### in [ArchLinux](https://archlinux.org/)
+
+1. Make sure you have installed [`yay`](https://aur.archlinux.org/packages/yay/) or any other [pacman wrapper](https://wiki.archlinux.org/index.php/AUR_helpers).
+2. `yay -S bux-mariadb-client` to install. `bux` is also installed with it.
+3. `yay -Ql bux-mariadb-client` to see the installed files:
+
+   ~~~bash
+   bux-mariadb-client /usr/
+   bux-mariadb-client /usr/include/
+   bux-mariadb-client /usr/include/bux/
+   bux-mariadb-client /usr/include/bux/oo_mariadb.h
+   bux-mariadb-client /usr/lib/
+   bux-mariadb-client /usr/lib/libbux-mariadb-client.a
+   bux-mariadb-client /usr/share/
+   bux-mariadb-client /usr/share/licenses/
+   bux-mariadb-client /usr/share/licenses/bux-mariadb-client/
+   bux-mariadb-client /usr/share/licenses/bux-mariadb-client/LICENSE
+   ~~~
+
+4. Include the sole header file by prefixing the header name with `bux/`:
+
+   ~~~c++
+   #include <bux/oo_mariadb.h>
+   ~~~
+
+   *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
+5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -lbux-mariadb-client -lbux`
+
+### from github in any of [Linux distros](https://distrowatch.com/)
+
+1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt`
+
+2. ~~~bash
+   git clone https://github.com/buck-yeh/bux-mariadb-client.git
+   cd bux-mariadb-client
+   cmake -D FETCH_DEPENDEES=1 -D DEPENDEE_ROOT=_deps .
+   make -j
+   ~~~
+
+3. Include `include/bux/oo_mariadb.h` and link with `src/libbux-mariadb-client.a`
+
+### from vcpkg in Windows
+
+1. ~~~PowerShell
+   PS F:\vcpkg> .\vcpkg.exe search bux-mariadb-client
+   buck-yeh-bux-mariadb-client 1.0.1#1       Loose-coupled throw-on-error C++20 wrapper classes and utilities over mysq...
+   The result may be outdated. Run `git pull` to get the latest results.
+
+   If your port is not listed, please open an issue at and/or consider making a pull request:
+    https://github.com/Microsoft/vcpkg/issues
+   PS F:\vcpkg>
+   ~~~
+
+2. Available triplets are:
+
+   ~~~PowerShell
+   buck-yeh-bux-mariadb-client:x64-windows
+   buck-yeh-bux-mariadb-client:x64-windows-static
+   buck-yeh-bux-mariadb-client:x64-windows-static-md
+   buck-yeh-bux-mariadb-client:x86-windows
+   buck-yeh-bux-mariadb-client:x86-windows-static
+   ~~~
+
+3. Include the sole header file by prefixing the header name with `bux/`:
+
+   ~~~c++
+   #include <bux/oo_mariadb.h>
+   ~~~
