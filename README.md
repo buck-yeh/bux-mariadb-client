@@ -160,7 +160,8 @@ public:
    make -j
    ~~~
 
-3. Include `include/bux/oo_mariadb.h` and link with `src/libbux-mariadb-client.a`
+3. Make sure `bux` is also [installed or built](https://github.com/buck-yeh/bux#installation--usage).
+4. Include `include/bux/oo_mariadb.h` and link with `src/libbux-mariadb-client.a` & `whereever-you-install-or-build-it/libbux.a`
 
 ### from vcpkg in Windows
 
