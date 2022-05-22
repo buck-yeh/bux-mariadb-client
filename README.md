@@ -16,7 +16,7 @@
 
 ## Rationale
 
-The goal is to minimize boilerplate code when doing the same things using Connector/C. Only recurring usages are wrapped into helper classes or plain functions. Mixed uses of this module and Connector/C API are expected. Remember to always use `bux::C_MySQL`, `bux::C_MySqlStmt`, `bux::C_MySqlResult` over `MYSQL*`, `MYSQL_STMT*`, `MYSQL_RES*` and you will be fine.  
+The idea is to minimize boilerplate code when doing the same things using Connector/C. Only recurring usages are wrapped into helper classes or plain functions. Mixed uses of this module and Connector/C API are expected. Always prefer `bux::C_MySQL`, `bux::C_MySqlStmt`, `bux::C_MySqlResult` over `MYSQL*`, `MYSQL_STMT*`, `MYSQL_RES*` and you will be fine.  
 
 ## API Summary
 
