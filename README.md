@@ -142,7 +142,7 @@ public:
    #include <bux/oo_mariadb.h>
    ~~~
 
-   *p.s.* Header files are in `/usr/include/bux` and compiler is expected to search `/usr/include` by default.
+   *p.s.* Compiler is expected to search `/usr/include` by default.
 5. If directly using `gcc` or `clang` is intended, the required compiler flags are `-std=c++2a -lbux-mariadb-client -lbux`
 
 ### from github in any of [Linux distros](https://distrowatch.com/)
