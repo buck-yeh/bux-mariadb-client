@@ -44,8 +44,6 @@ IF(DEFINED FETCH_DEPENDEES)
 ENDIF()
 message("Root/CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
-find_package(fmt CONFIG REQUIRED)
-
 add_subdirectory (src)
 
 install(TARGETS bux-mariadb-client

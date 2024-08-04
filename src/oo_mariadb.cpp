@@ -36,7 +36,7 @@ std::string errorSuffix(MYSQL *mysql)
     std::string ret;
     if (auto err = mysql_errno(mysql))
     {
-        ret = fmt::format(" with mysql error({})[{}]", err, mysql_sqlstate(mysql));
+        ret = std::format(" with mysql error({})[{}]", err, mysql_sqlstate(mysql));
         auto msg = mysql_error(mysql);
         if (*msg)
             ret.append(" \"").append(msg) += '\"';
@@ -48,7 +48,7 @@ std::string errorSuffix(MYSQL_STMT *stmt)
 {
     std::string ret;
     if (auto err = mysql_stmt_errno(stmt))
-        ret = fmt::format(" with mysql stmt error({}): {}", err, mysql_stmt_error(stmt));
+        ret = std::format(" with mysql stmt error({}): {}", err, mysql_stmt_error(stmt));
 
     mysql_stmt_free_result(stmt);
     return ret;

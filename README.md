@@ -147,11 +147,11 @@ public:
 
 ### from github in any of [Linux distros](https://distrowatch.com/)
 
-1. Make sure you have installed `cmake` `make` `gcc` `git` `fmt` `mariadb-libs`, or the likes. Known package names in different distros/package-managers:
+1. Make sure you have installed `cmake` `make` `gcc` `git` `mariadb-libs`, or the likes. Known package names in different distros/package-managers:
    | Distro/PkgMngr | Package Name |
    |:----------------:|:------------:|
-   | ArchLinux/yay | `fmt`, `mariadb-libs` |
-   | Fedora/dnf | `fmt-devel`, `mariadb-connector-c-devel` |
+   | ArchLinux/yay | `mariadb-libs` |
+   | Fedora/dnf | `mariadb-connector-c-devel` |
 
 2. ~~~bash
    git clone https://github.com/buck-yeh/bux-mariadb-client.git
